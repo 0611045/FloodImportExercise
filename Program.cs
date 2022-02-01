@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JBAExercise.Console
@@ -6,26 +7,32 @@ namespace JBAExercise.Console
     class Program
     {
         /// <summary>
-        /// File path.
-        /// </summary>
-        private static string _filePath = $@"C:\Users\Tom Garner\OneDrive\Career\Applications\JBA\cru-ts-2-10.1991-2000-cutdown.pre";
-
-        /// <summary>
         /// Main code entry point.
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            // Create an instance of the JBA Precipitation File Reader and Writer (to MSSQL).
-            using (var reader = new JbaPrecipitationFileReader(filePath: _filePath))
-            using (var writer = new JbaPrecipitationFileMsSqlWriter(
-                serverName: Settings.SqlServerName,
-                databaseName: Settings.SqlDatabaseName,
-                schemaName: Settings.SqlSchemaName,
-                tableName: Settings.SqlTableName))
+            try
             {
-                writer.Write(reader.SelectMany(a => Map(a)));
+                // Create an instance of the JBA Precipitation File Reader and Writer (to MSSQL).
+                using (var reader = new JbaPrecipitationFileReader(filePath: Settings.FilePath))
+                using (var writer = new JbaPrecipitationFileMsSqlWriter(
+                    serverName: Settings.SqlServerName,
+                    databaseName: Settings.SqlDatabaseName,
+                    schemaName: Settings.SqlSchemaName,
+                    tableName: Settings.SqlTableName))
+                {
+                    writer.Write(reader.SelectMany(a => Map(a)));
+                }
             }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex.ToString());
+            }
+
+            System.Console.WriteLine($"Finished writing the file.");
+            System.Console.WriteLine($"Press return to exit.");
+            System.Console.ReadLine();
         }
 
         // Map the Precipitation Time Series from a DTO to a DB object.

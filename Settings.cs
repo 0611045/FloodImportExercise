@@ -8,6 +8,7 @@ namespace JBAExercise.Console
 {
     public static class Settings
     {
+        public static string FilePath { get; internal set; }
         public static string SqlServerName { get; internal set; }
         public static string SqlDatabaseName { get; internal set; }
         public static string SqlSchemaName { get; internal set; }
@@ -15,6 +16,7 @@ namespace JBAExercise.Console
 
         static Settings()
         {
+            FilePath = GetAppSetting("FilePath");
             SqlServerName = GetAppSetting("SqlServerName");
             SqlDatabaseName = GetAppSetting("SqlDatabaseName");
             SqlSchemaName = GetAppSetting("SqlSchemaName");
