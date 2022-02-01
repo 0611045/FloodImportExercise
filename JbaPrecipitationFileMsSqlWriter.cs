@@ -8,6 +8,9 @@ using System.Reflection;
 
 namespace JBAExercise.Console
 {
+    /// <summary>
+    /// Writes the JBA Precipitation File to a SQL table.
+    /// </summary>
     internal class JbaPrecipitationFileMsSqlWriter : IDisposable
     {
         public string ServerName { get; }
@@ -23,6 +26,10 @@ namespace JBAExercise.Console
             this.TableName = tableName;
         }
 
+        /// <summary>
+        /// Write a collection of Data records.
+        /// </summary>
+        /// <param name="items"></param>
         internal void Write(IEnumerable<DataDb> items)
         {
             using (var sqlConnection = GetSqlConnection())
@@ -39,6 +46,10 @@ namespace JBAExercise.Console
             }
         }
 
+        /// <summary>
+        /// Create a SQL connection string.
+        /// </summary>
+        /// <returns></returns>
         private string GetSqlConnectionString()
         {
             var builder = new System.Data.SqlClient.SqlConnectionStringBuilder()
@@ -51,6 +62,10 @@ namespace JBAExercise.Console
             return builder.ConnectionString;
         }
 
+        /// <summary>
+        /// Get a SQL connection.
+        /// </summary>
+        /// <returns></returns>
         private SqlConnection GetSqlConnection()
         {
             var connStr = GetSqlConnectionString();
@@ -62,7 +77,11 @@ namespace JBAExercise.Console
 
         }
 
-        public class SqlWriter<T> : IDisposable
+        /// <summary>
+        /// Utility class for writing data from a collection to SQL.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        internal class SqlWriter<T> : IDisposable
         {
             private static readonly int _countBatchSize = 100000;
 
@@ -86,6 +105,11 @@ namespace JBAExercise.Console
             {
             }
 
+            /// <summary>
+            /// Write the items.
+            /// </summary>
+            /// <param name="items"></param>
+            /// <returns></returns>
             public int Write(IEnumerable<T> items)
             {
                 CreateTable();
@@ -121,6 +145,9 @@ namespace JBAExercise.Console
                 return countItemsWritten;
             }
 
+            /// <summary>
+            /// Create the table.
+            /// </summary>
             private void CreateTable()
             {
                 var sql = new List<string>() { $"IF EXISTS ( SELECT * FROM sys.tables WHERE name = '{_tableName}' ) DROP TABLE [{_schemaName}].[{_tableName}]; CREATE TABLE [{_schemaName}].[{_tableName}]" };
@@ -150,6 +177,11 @@ namespace JBAExercise.Console
                 }
             }
 
+            /// <summary>
+            /// Map a .NET property to a SQL data type. For example, .NET DateTime == SQL DATE.
+            /// </summary>
+            /// <param name="property"></param>
+            /// <returns></returns>
             private string MapToSql(System.Type property)
             {
                 if (property == typeof(int))
@@ -162,6 +194,10 @@ namespace JBAExercise.Console
                     throw new NotSupportedException();
             }
 
+            /// <summary>
+            /// Get a DataTable which describes the list of properties in the class described by T.
+            /// </summary>
+            /// <returns></returns>
             private DataTable GetDataTable()
             {
                 var dataTable = new DataTable();
@@ -191,11 +227,9 @@ namespace JBAExercise.Console
             }
 
             /// <summary>
-            ///     Write the data to the Table.
+            /// Write the data to the Table using the SqlBulkCopy function.
             /// </summary>
             /// <param name="dataTable"></param>
-            /// <param name="sqlTransaction"></param>
-            /// <param name="mapColumns"></param>
             private int Write(DataTable dataTable)
             {
                 var rowsWritten = 0;
@@ -220,6 +254,9 @@ namespace JBAExercise.Console
             }
         }
 
+        /// <summary>
+        /// Class used as a mapper to the SQL table.
+        /// </summary>
         internal class DataDb
         {
             public int Xref { get; }

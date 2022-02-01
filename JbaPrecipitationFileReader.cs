@@ -313,16 +313,16 @@ namespace JBAExercise.Console
                 }
             }
         }
+        
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose()
         {
             _streamReader.Dispose();
             _log.Dispose();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
 
         private class GridParameterRaw

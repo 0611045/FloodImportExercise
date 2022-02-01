@@ -2,6 +2,9 @@
 
 namespace JBAExercise.Console
 {
+    /// <summary>
+    /// Error log. Just prints errors to the Console.
+    /// </summary>
     internal class ErrorLog : IDisposable
     {
         private JbaPrecipitationFileReader _reader;
@@ -11,6 +14,10 @@ namespace JBAExercise.Console
             _reader = reader;
         }
 
+        /// <summary>
+        /// Write to the log.
+        /// </summary>
+        /// <param name="message"></param>
         internal void Report(string message)
         {
             System.Console.WriteLine($"Error: Line Number: {_reader.LineNumber} | {message} | Raw: {_reader.CurrentLine}");
